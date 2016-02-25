@@ -1,0 +1,84 @@
+<script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+
+<h2>Soundcloud Test</h2>
+
+<div class="form">
+  <input id="artist" style="width:350px" type="text" name="name" placeholder="enter Soundcloud userID of artist">
+  <button id="button">Submit</button>
+</div>
+
+<div id="followers">
+</div>
+<div id="next">
+</div>
+
+<script>
+SC.initialize({
+client_id: 'e3260c6ce4370597a3d9afbc06fd58ac',
+redirect_uri: 'http://localhost:8000/callback'
+});
+</script>
+
+<script>
+
+  $('#button').click(function(){
+    var artistID = $('#artist').val();
+
+    $.get("/authorized/"+artistID,function(data){
+
+      $('#next').append('<button class="next" id="'+data.next_href+'" type="submit">Next Page</button>');
+
+      var followersUsernames = data.collection.map(function(elem, i){
+        return {"username":elem.username, id:elem.id, track_count:elem.track_count};
+      }).filter(function(elem, i){
+      if(elem.track_count > 0){
+        return elem;
+      }
+    });
+
+    followersUsernames.forEach(function(elem, i){
+      $('#followers').append('<li>' + elem.username +'  '+ elem.track_count + '</li><button class="liketrack"   id="'+elem.id+'" type="submit">Like Track</button>');
+    });
+
+    })
+  })
+
+
+  $(document).on('click','.liketrack', function(){
+  var id =  (this.id);
+
+
+
+
+
+  $.get("/liketrack/"+id, function(data){
+    $('#'+id).prop('disabled',true);
+  })
+  })
+
+  $(document).on('click','.next',function(){
+    var url = this.id.split('/').splice(4).join('/');
+
+
+    $.post("/nextpage",{data:url}, function(data){
+
+      var followersUsernames = data.collection.map(function(elem, i){
+        return {"username":elem.username, id:elem.id, track_count:elem.track_count};
+      }).filter(function(elem, i){
+      if(elem.track_count > 0){
+        return elem;
+      }
+    });
+    $('#followers').html('');
+    $('#next').html('');
+    followersUsernames.forEach(function(elem, i){
+      $('#followers').append('<li>' + elem.username +'  '+ elem.track_count + '</li><button class="liketrack"   id="'+elem.id+'" type="submit">Like Track</button>');
+    });
+
+    $('#next').append('<button class="next" id="'+data.next_href+'" type="submit">Next Page</button>');
+
+    })
+
+
+  })
+</script>
