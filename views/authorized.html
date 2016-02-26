@@ -25,7 +25,8 @@ redirect_uri: 'http://localhost:8000/callback'
     var artistID = $('#artist').val();
 
     $.get("/authorized/"+artistID,function(data){
-
+      $('#followers').html('');
+      $('#next').html('');
       $('#next').append('<button class="next" id="'+data.next_href+'" type="submit">Next Page</button>');
 
       var followersUsernames = data.collection.map(function(elem, i){
