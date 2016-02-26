@@ -1,4 +1,3 @@
-<script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
 
 <h2>Soundcloud Test</h2>
 
@@ -13,20 +12,13 @@
 </div>
 
 <script>
-SC.initialize({
-client_id: 'e3260c6ce4370597a3d9afbc06fd58ac',
-redirect_uri: 'http://localhost:8000/callback'
-});
-</script>
-
-<script>
 
   $('#button').click(function(){
     var artistID = $('#artist').val();
-
+    $('#followers').html('');
+    $('#next').html('');
     $.get("/authorized/"+artistID,function(data){
-      $('#followers').html('');
-      $('#next').html('');
+
       $('#next').append('<button class="next" id="'+data.next_href+'" type="submit">Next Page</button>');
 
       var followersUsernames = data.collection.map(function(elem, i){
