@@ -1,1 +1,1 @@
-web = node ./lib/start.js
+web: node ./lib/start.js
